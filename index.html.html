@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Для тебя 💌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #ffd1dc; /* Нежно-розовый фон */
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Анимация падающих сердечек */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart-fall {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.6;
+            color: #ff4d6d;
+            animation: fall linear infinite;
+            user-select: none;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        .screen {
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Экран с вопросом */
+        .question-box {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(255, 105, 135, 0.2);
+        }
+
+        .question-box p {
+            font-size: 1.8rem;
+            color: #d44e6c;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.8rem;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s all;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            min-width: 140px;
+        }
+
+        .btn-yes {
+            background: #ff4d6d;
+            color: white;
+        }
+
+        .btn-yes:hover {
+            background: #ff3355;
+            transform: scale(1.05);
+        }
+
+        .btn-no {
+            background: #2b2b2b;
+            color: white;
+            position: relative;
+        }
+
+        /* Экран с каруселью */
+        .valentine-screen {
+            text-align: center;
+        }
+
+        .valentine-screen h2 {
+            font-size: 2.2rem;
+            color: #c12f5a;
+            margin-bottom: 10px;
+        }
+
+        .valentine-screen p {
+            font-size: 1.2rem;
+            color: #631f33;
+            margin-bottom: 20px;
+        }
+
+        /* Карусель */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            background: #ffe3e8;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
+            aspect-ratio: 1/1;
+            background: #ffe3e8;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 30px;
+        }
+
+        /* Индикаторы */
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid #ff4d6d;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .indicator.active {
+            background: #ff4d6d;
+            transform: scale(1.2);
+        }
+
+        /* Кнопки навигации */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            color: #ff4d6d;
+            font-weight: bold;
+        }
+
+        .carousel-btn.prev {
+            left: 10px;
+        }
+
+        .carousel-btn.next {
+            right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-btn {
+                display: none;
+            }
+        }
+
+        .heart-emoji {
+            font-size: 2.5rem;
+            margin-top: 10px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Падающие сердечки -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <div class="container">
+        <!-- Экран 1: Вопрос -->
+        <div id="screen1" class="screen">
+            <div class="question-box">
+                <p>💌 У меня для тебя письмо, хочешь открыть?</p>
+                <div class="buttons">
+                    <button id="yesBtn" class="btn btn-yes">ДА</button>
+                    <button id="noBtn" class="btn btn-no">НЕТ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран 2: Валентинка с каруселью -->
+        <div id="screen2" class="screen hidden valentine-screen">
+            <h2>Люблю тебя! ❤️</h2>
+            <p>Спасибо, что ты есть. Ты — лучшее, что со мной случалось.</p>
+            
+            <!-- Карусель с фото -->
+            <div class="carousel-container">
+                <button class="carousel-btn prev" id="prevBtn">←</button>
+                <button class="carousel-btn next" id="nextBtn">→</button>
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- ТВОИ ФОТО с Яндекс.Облака -->
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/96a4585767173f63.jpeg" alt="Фото 1"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/bd4ab14e3d80311b.jpeg" alt="Фото 2"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/95c7f547bb64123c.jpeg" alt="Фото 3"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/fb8848927d2dfa27.jpeg" alt="Фото 4"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/0406f34733499c45.jpeg" alt="Фото 5"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/f5d73054448e660b.jpeg" alt="Фото 6"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/ac25f5b7edeaf848.jpeg" alt="Фото 7"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/20175fe19d7837d6.jpeg" alt="Фото 8"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/500c767d1a2723a6.jpeg" alt="Фото 9"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/2ee59534208b02b8.jpeg" alt="Фото 10"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/18907b23700eed89.jpeg" alt="Фото 11"></div>
+                    <div class="carousel-slide"><img src="https://storage.yandexcloud.net/fotora.ru/e5bf604a3988468d.jpeg" alt="Фото 12"></div>
+                </div>
+            </div>
+
+            <!-- Индикаторы -->
+            <div class="carousel-indicators" id="indicators"></div>
+
+            <div class="heart-emoji">
+                💖 💕 💗
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // СОЗДАЁМ ПАДАЮЩИЕ СЕРДЕЧКИ
+        function createHearts() {
+            const heartsBg = document.getElementById('heartsBg');
+            const heartCount = 25;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-fall';
+                heart.innerHTML = '❤️';
+                
+                const size = Math.random() * 20 + 15;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 8 + 5;
+                const delay = Math.random() * -15;
+                
+                heart.style.fontSize = size + 'px';
+                heart.style.left = left + '%';
+                heart.style.animationDuration = duration + 's';
+                heart.style.animationDelay = delay + 's';
+                heart.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                heartsBg.appendChild(heart);
+            }
+        }
+
+        createHearts();
+
+        // Элементы
+        const screen1 = document.getElementById('screen1');
+        const screen2 = document.getElementById('screen2');
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+
+        // ДА
+        yesBtn.addEventListener('click', () => {
+            screen1.classList.add('hidden');
+            screen2.classList.remove('hidden');
+        });
+
+        // Кнопка НЕТ убегает
+        function moveNoButton() {
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+
+            const maxX = containerRect.width - btnRect.width - 20;
+            const maxY = containerRect.height - btnRect.height - 20;
+
+            let randomX = Math.random() * maxX;
+            let randomY = Math.random() * maxY;
+
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        noBtn.addEventListener('mouseover', (e) => {
+            if (window.innerWidth > 768) moveNoButton();
+        });
+
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        window.addEventListener('resize', () => {
+            noBtn.style.position = ''; 
+            noBtn.style.left = '';
+            noBtn.style.top = '';
+        });
+
+        // КАРУСЕЛЬ
+        const track = document.getElementById('carouselTrack');
+        const slides = document.querySelectorAll('.carousel-slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indicatorsContainer = document.getElementById('indicators');
+
+        let currentIndex = 0;
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        // Индикаторы
+        slides.forEach((_, index) => {
+            const indicator = document.createElement('div');
+            indicator.classList.add('indicator');
+            if (index === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => goToSlide(index));
+            indicatorsContainer.appendChild(indicator);
+        });
+
+        const indicators = document.querySelectorAll('.indicator');
+
+        function updateIndicators() {
+            indicators.forEach((ind, index) => {
+                if (index === currentIndex) {
+                    ind.classList.add('active');
+                } else {
+                    ind.classList.remove('active');
+                }
+            });
+        }
+
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= slides.length) index = slides.length - 1;
+            currentIndex = index;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            updateIndicators();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) goToSlide(currentIndex - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < slides.length - 1) goToSlide(currentIndex + 1);
+        });
+
+        // Свайпы
+        track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+
+        track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            currentX = e.touches[0].clientX;
+        });
+
+        track.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const diff = currentX - startX;
+            const threshold = 50;
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0 && currentIndex > 0) {
+                    goToSlide(currentIndex - 1);
+                } else if (diff < 0 && currentIndex < slides.length - 1) {
+                    goToSlide(currentIndex + 1);
+                }
+            }
+        });
+
+        // Для десктопа
+        track.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+            isDragging = true;
+            e.preventDefault();
+        });
+
+        track.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            currentX = e.clientX;
+        });
+
+        track.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const diff = currentX - startX;
+            const threshold = 50;
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0 && currentIndex > 0) {
+                    goToSlide(currentIndex - 1);
+                } else if (diff < 0 && currentIndex < slides.length - 1) {
+                    goToSlide(currentIndex + 1);
+                }
+            }
+        });
+
+        track.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        goToSlide(0);
+    </script>
+</body>
+</html>
